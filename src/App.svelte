@@ -3,6 +3,27 @@
   let hobbieInput;
   let isLoading = false;
 
+  fetch("https://svelte-rest-api.firebaseio.com/hobbies.json")
+    .then(result => {
+      if (!result.ok) {
+        throw new Error("Failed!");
+      }
+      return result.json();
+    })
+    .then(data => {
+      console.log(data);
+      hobbies = Object.values(data);
+      let keys = Object.keys(data);
+      console.log(keys);
+
+      for (let key in data) {
+        console.log(key, data[key]);
+      }
+    })
+    .catch(error => {
+      console.log(`Error: ${error}`);
+    });
+
   const addHobbie = () => {
     // console.log({ hobbieInput });
     hobbies = [...hobbies, hobbieInput.value];
