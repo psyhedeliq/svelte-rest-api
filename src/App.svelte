@@ -1,5 +1,6 @@
 <script>
   import { onMount } from "svelte";
+  import hobbyStore from "./hobbie-store.js";
 
   let hobbies = [];
   let hobbieInput;
@@ -16,7 +17,8 @@
     .then(data => {
       isLoading = false;
       console.log(data);
-      hobbies = Object.values(data);
+      // hobbies = Object.values(data);
+      hobbyStore.setHobbies(Object.values(data));
       let keys = Object.keys(data);
       console.log(keys);
 
@@ -30,9 +32,10 @@
       console.log(`Error: ${error}`);
     });
 
-  const addHobbie = () => {
+  const addHobby = () => {
     // console.log({ hobbieInput });
-    hobbies = [...hobbies, hobbieInput.value];
+    // hobbies = [...hobbies, hobbieInput.value];
+    hobbyStore.addHobby(hobbieInput.value);
 
     isLoading = true;
     fetch("https://svelte-rest-api.firebaseio.com/hobbies.json", {
@@ -47,7 +50,9 @@
         if (!result.ok) {
           throw new Error("Failed!");
         }
+        // ..
         alert("Saved data!");
+        // res.json() => promise with a object that contains the id
       })
       .catch(error => {
         isLoading = false;
@@ -58,13 +63,13 @@
 
 <label for="hobbie">Hobbie</label>
 <input type="text" id="hobbie" bind:this={hobbieInput} />
-<button on:click={addHobbie}>Add Hobbie</button>
+<button on:click={addHobby}>Add Hobbie</button>
 
 {#if isLoading}
   <p>Loading...</p>
 {:else}
   <ul>
-    {#each hobbies as hobby}
+    {#each $hobbyStore as hobby}
       <li>{hobby}</li>
     {/each}
   </ul>
